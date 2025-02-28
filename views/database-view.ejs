@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Tables</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+        .table-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2>Users Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.id %></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.phone || 'N/A' %></td>
+                        <td><%= user.role %></td>
+                        <td><%= user.created_at %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <h2>Patients Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    <th>Blood Group</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% patients.forEach(patient => { %>
+                    <tr>
+                        <td><%= patient.id %></td>
+                        <td><%= patient.name %></td>
+                        <td><%= patient.email %></td>
+                        <td><%= patient.phone || 'N/A' %></td>
+                        <td><%= patient.dob %></td>
+                        <td><%= patient.gender %></td>
+                        <td><%= patient.blood_group || 'N/A' %></td>
+                        <td><%= patient.address || 'N/A' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <h2>Doctors Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Specialization</th>
+                    <th>Qualification</th>
+                    <th>License Number</th>
+                    <th>Experience (Years)</th>
+                    <th>Consultation Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% doctors.forEach(doctor => { %>
+                    <tr>
+                        <td><%= doctor.id %></td>
+                        <td><%= doctor.name %></td>
+                        <td><%= doctor.email %></td>
+                        <td><%= doctor.phone || 'N/A' %></td>
+                        <td><%= doctor.specialization %></td>
+                        <td><%= doctor.qualification || 'N/A' %></td>
+                        <td><%= doctor.license_number || 'N/A' %></td>
+                        <td><%= doctor.experience_years || 'N/A' %></td>
+                        <td>₹<%= doctor.consultation_fee %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <h2>Appointments Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Symptoms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% appointments.forEach(appointment => { %>
+                    <tr>
+                        <td><%= appointment.id %></td>
+                        <td><%= appointment.patient_name %></td>
+                        <td><%= appointment.doctor_name %></td>
+                        <td><%= appointment.appointment_date %></td>
+                        <td><%= appointment.appointment_time %></td>
+                        <td><%= appointment.status %></td>
+                        <td><%= appointment.symptoms || 'N/A' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <h2>Admins Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Access Level</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% admins.forEach(admin => { %>
+                    <tr>
+                        <td><%= admin.id %></td>
+                        <td><%= admin.name %></td>
+                        <td><%= admin.email %></td>
+                        <td><%= admin.access_level %></td>
+                        <td><%= admin.created_at %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html> 

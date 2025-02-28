@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #12ac8e;
+        --primary-color-dark: #0d846c;
+        --primary-color-light: #e9f7f7;
+        --secondary-color: #fb923c;
+        --text-dark: #333333;
+        --text-light: #767268;
+        --white: #ffffff;
+        --max-width: 1200px;
+      }
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      img {
+        width: 100%;
+        display: flex;
+      }
+
+      .section__container {
+        max-width: var(--max-width);
+        margin: auto;
+        padding: 5rem 1rem;
+      }
+
+      .section__header {
+        margin-bottom: 1rem;
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        text-align: center;
+      }
+
+      .section__subheader {
+        text-align: center;
+        color: var(--text-light);
+        margin-bottom: 3rem;
+      }
+
+      .btn {
+        padding: 0.75rem 2rem;
+        outline: none;
+        border: none;
+        font-size: 1rem;
+        color: var(--white);
+        background-color: var(--secondary-color);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        background-color: #f97316;
+      }
+
+      /* Navigation */
+      .nav__container {
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--primary-color);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+      }
+
+      .nav__logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--white);
+        text-decoration: none;
+      }
+
+      .nav__logo span {
+        color: var(--secondary-color);
+      }
+
+      .nav__links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .nav__link {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 1.1rem;
+        transition: 0.3s;
+      }
+
+      .nav__link:hover {
+        color: var(--secondary-color);
+      }
+
+      .hamburger {
+        display: none;
+        cursor: pointer;
+      }
+
+      .hamburger span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 5px 0;
+        background: var(--white);
+        transition: 0.3s;
+      }
+
+      /* Hero Section */
+      .hero {
+        background-image: linear-gradient(
+            to right,
+            rgba(18, 172, 142, 0.8),
+            rgba(18, 172, 142, 0.8)
+          ),
+          url("/images/header.jpg");
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        padding-top: 100px;
+      }
+
+      .hero__container {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .hero__content {
+        max-width: 600px;
+      }
+
+      .hero__content h1 {
+        margin-bottom: 2rem;
+        font-size: 3rem;
+        line-height: 4rem;
+        color: var(--white);
+      }
+
+      .hero__content p {
+        margin-bottom: 2rem;
+        color: var(--white);
+      }
+
+      .hero__btn {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .hero__btn .btn:first-child {
+        background-color: var(--white);
+        color: var(--primary-color);
+      }
+
+      /* Why Choose Us */
+      .why-us__grid {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .why-us__card {
+        padding: 2rem;
+        text-align: center;
+        border-radius: 10px;
+        background-color: var(--primary-color-light);
+        transition: 0.3s;
+      }
+
+      .why-us__card:hover {
+        background-color: var(--primary-color);
+        transform: translateY(-10px);
+      }
+
+      .why-us__card:hover * {
+        color: var(--white);
+      }
+
+      .why-us__card i {
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+      }
+
+      .why-us__card h4 {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .why-us__card p {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      /* Services */
+      .services {
+        background-color: var(--primary-color-light);
+      }
+
+      .services__grid {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .services__card {
+        padding: 2rem;
+        text-align: center;
+        background-color: var(--white);
+        border-radius: 10px;
+        transition: 0.3s;
+      }
+
+      .services__card:hover {
+        transform: translateY(-10px);
+      }
+
+      .services__card i {
+        margin-bottom: 2rem;
+        font-size: 3rem;
+        color: var(--primary-color);
+      }
+
+      .services__card h4 {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .services__card p {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Doctors */
+      .doctors__grid {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .doctors__card {
+        text-align: center;
+      }
+
+      .doctors__card img {
+        margin-bottom: 2rem;
+        max-width: 300px;
+        border-radius: 10px;
+        margin-inline: auto;
+      }
+
+      .doctors__card h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .doctors__card p {
+        color: var(--text-light);
+      }
+
+      /* Testimonials */
+      .testimonials {
+        background-color: var(--primary-color-light);
+      }
+
+      .testimonials__grid {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .testimonials__card {
+        padding: 2rem;
+        background-color: var(--white);
+        border-radius: 10px;
+      }
+
+      .testimonials__card p {
+        margin-bottom: 2rem;
+        color: var(--text-light);
+      }
+
+      .testimonials__client {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .testimonials__client img {
+        max-width: 60px;
+        border-radius: 100%;
+      }
+
+      .testimonials__client h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .testimonials__client p {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 1024px) {
+        .why-us__grid,
+        .services__grid,
+        .doctors__grid,
+        .testimonials__grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav__links {
+          display: none;
+        }
+
+        .hamburger {
+          display: block;
+        }
+
+        .hero__container {
+          grid-template-columns: repeat(1, 1fr);
+          text-align: center;
+        }
+
+        .hero__content {
+          margin-inline: auto;
+        }
+
+        .hero__btn {
+          justify-content: center;
+        }
+
+        .why-us__grid,
+        .services__grid,
+        .doctors__grid,
+        .testimonials__grid {
+          grid-template-columns: repeat(1, 1fr);
+        }
+      }
+
+      .footer {
+        background-color: #1a1a1a;
+        color: #fff;
+        padding: 4rem 0 2rem;
+        margin-top: 4rem;
+      }
+
+      .footer__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .footer__col h4 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+      }
+
+      .footer__col ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer__col ul li {
+        margin-bottom: 0.8rem;
+      }
+
+      .footer__col ul li a {
+        color: #fff;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer__col ul li a:hover {
+        color: var(--primary-color);
+      }
+
+      .footer__col ul li i {
+        color: var(--primary-color);
+        margin-right: 0.5rem;
+        width: 20px;
+      }
+
+      .footer__bottom {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid #333;
+      }
+
+      .footer__bottom p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #888;
+      }
+    </style>
+    <title>DoctorHealthcare - Professional Medical Services</title>
+  </head>
+  <body>
+    <nav class="nav__container">
+      <a href="/" class="nav__logo">Doctor<span>Healthcare</span></a>
+      <ul class="nav__links">
+        <li><a href="/" class="nav__link">Home</a></li>
+        <li><a href="/services" class="nav__link">Services</a></li>
+        <li><a href="/doctors" class="nav__link">Doctors</a></li>
+        <li><a href="/about" class="nav__link">About</a></li>
+        <li><a href="/contact" class="nav__link">Contact</a></li>
+        <li><a href="/login" class="nav__link">Login</a></li>
+      </ul>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="section__container hero__container">
+        <div class="hero__content">
+          <h1>Expert Healthcare at Your Fingertips</h1>
+          <p>
+            Experience world-class healthcare with our team of dedicated medical
+            professionals. Book your appointment today for personalized care and
+            treatment.
+          </p>
+          <div class="hero__btn">
+            <a href="/login" class="btn">Book Appointment</a>
+            <a href="/doctors" class="btn">Find Doctors</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section__container why-us">
+      <h2 class="section__header">Why Choose DoctorHealthcare?</h2>
+      <p class="section__subheader">
+        We provide the best medical services with a focus on patient care and
+        satisfaction
+      </p>
+      <div class="why-us__grid">
+        <div class="why-us__card">
+          <i class="fas fa-user-md fa-3x mb-4" style="color: var(--primary-color)"></i>
+          <h4>Experienced Doctors</h4>
+          <p>
+            Our team consists of highly qualified and experienced medical
+            professionals dedicated to your health
+          </p>
+        </div>
+        <div class="why-us__card">
+          <i class="fas fa-calendar-check fa-3x mb-4" style="color: var(--primary-color)"></i>
+          <h4>Easy Appointments</h4>
+          <p>
+            Book your appointments easily through our online platform at your
+            convenience
+          </p>
+        </div>
+        <div class="why-us__card">
+          <i class="fas fa-hospital fa-3x mb-4" style="color: var(--primary-color)"></i>
+          <h4>Quality Care</h4>
+          <p>
+            We provide comprehensive healthcare services with a focus on quality and
+            patient satisfaction
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="services">
+      <div class="section__container">
+        <h2 class="section__header">Our Medical Services</h2>
+        <p class="section__subheader">
+          Comprehensive healthcare services for you and your family
+        </p>
+        <div class="services__grid">
+          <div class="services__card">
+            <i class="fas fa-heartbeat fa-3x mb-4" style="color: var(--primary-color)"></i>
+            <h4>Cardiology</h4>
+            <p>Expert care for heart-related conditions</p>
+            <a href="/services" class="btn">Learn More</a>
+          </div>
+          <div class="services__card">
+            <i class="fas fa-brain fa-3x mb-4" style="color: var(--primary-color)"></i>
+            <h4>Neurology</h4>
+            <p>Specialized care for neurological disorders</p>
+            <a href="/services" class="btn">Learn More</a>
+          </div>
+          <div class="services__card">
+            <i class="fas fa-baby fa-3x mb-4" style="color: var(--primary-color)"></i>
+            <h4>Pediatrics</h4>
+            <p>Comprehensive care for children</p>
+            <a href="/services" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section__container doctors">
+      <h2 class="section__header">Meet Our Expert Doctors</h2>
+      <p class="section__subheader">
+        Experienced medical professionals at your service
+      </p>
+      <div class="doctors__grid">
+        <div class="doctors__card">
+          <img src="/images/doctor-1.jpg" alt="doctor" />
+          <h4>Dr. Sarah Johnson</h4>
+          <p>Cardiologist</p>
+        </div>
+        <div class="doctors__card">
+          <img src="/images/doctor-2.jpg" alt="doctor" />
+          <h4>Dr. Michael Chen</h4>
+          <p>Neurologist</p>
+        </div>
+        <div class="doctors__card">
+          <img src="/images/doctor-3.jpg" alt="doctor" />
+          <h4>Dr. Emily Davis</h4>
+          <p>Pediatrician</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <div class="section__container">
+        <h2 class="section__header">What Our Patients Say</h2>
+        <p class="section__subheader">
+          Real experiences from our valued patients
+        </p>
+        <div class="testimonials__grid">
+          <div class="testimonials__card">
+            <p>
+              "Excellent service and care. The doctors are very professional and
+              take time to listen to your concerns."
+            </p>
+            <div class="testimonials__client">
+              <img src="/images/client-1.jpg" alt="client" />
+              <div>
+                <h4>John Smith</h4>
+                <p>Patient</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonials__card">
+            <p>
+              "Very efficient appointment system. I could easily book my
+              appointment online and the wait times were minimal."
+            </p>
+            <div class="testimonials__client">
+              <img src="/images/client-2.jpg" alt="client" />
+              <div>
+                <h4>Lisa Wong</h4>
+                <p>Patient</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonials__card">
+            <p>
+              "The doctors are very knowledgeable and the staff is friendly. I
+              highly recommend their services."
+            </p>
+            <div class="testimonials__client">
+              <img src="/images/client-3.jpg" alt="client" />
+              <div>
+                <h4>Robert Johnson</h4>
+                <p>Patient</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__grid">
+          <div class="footer__col">
+            <h4>Doctor Appointment System</h4>
+            <p>Your trusted healthcare partner. Book appointments with top doctors and specialists in Warangal.</p>
+          </div>
+          <div class="footer__col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/doctors">Our Doctors</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h4>Contact Info</h4>
+            <ul>
+              <li><i class="fas fa-map-marker-alt"></i> Warangal, Telangana</li>
+              <li><i class="fas fa-envelope"></i> damsysmjp@gmail.com</li>
+              <li><i class="fas fa-phone"></i> +91 897 7218 926</li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <h4>Working Hours</h4>
+            <ul>
+              <li>Monday - Friday: 9:00 AM - 8:00 PM</li>
+              <li>Saturday: 9:00 AM - 5:00 PM</li>
+              <li>Sunday: Emergency Only</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <p>&copy; 2025 Doctor Appointment System. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        offset: 150,
+      });
+
+      // Mobile menu toggle
+      const hamburger = document.querySelector('.hamburger');
+      const navLinks = document.querySelector('.nav__links');
+      const links = document.querySelectorAll('.nav__link');
+
+      hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        hamburger.classList.toggle('active');
+      });
+
+      links.forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('active');
+          hamburger.classList.remove('active');
+        });
+      });
+    </script>
+  </body>
+</html>

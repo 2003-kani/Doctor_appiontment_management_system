@@ -1,0 +1,165 @@
+.contact-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+}
+
+.contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-item i {
+    color: #12ac8e;
+    font-size: 24px;
+}
+
+.contact-item a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.contact-item a:hover {
+    color: #12ac8e;
+}
+
+/* Add these styles for the doctors section */
+.doctors-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.doctors-grid {
+    margin-top: 40px;
+}
+
+.doctor-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+    margin-bottom: 0.75rem;
+    max-width: 300px;
+    margin: 0 auto 0.75rem;
+    text-align: center;
+    padding-top: 12px;
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.doctor-image {
+    width: 100%;
+    height: 20px;
+    object-fit: cover;
+    margin: 0;
+    border-top: 1px solid #eee;
+}
+
+.doctor-name {
+    color: #333;
+    font-size: 0.95rem;
+    margin: 4px 0 1px;
+    padding: 0;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+}
+
+.doctor-specialization {
+    color: #12ac8e;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.doctor-info {
+    text-align: left;
+    margin: 8px 0 4px;
+    padding: 0.75rem 0.75rem 0.4rem;
+    border-top: 1px solid #eee;
+}
+
+.doctor-info p {
+    margin: 6px 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.doctor-info i {
+    color: #12ac8e;
+    width: 25px;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+.doctor-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+    padding: 0 0.75rem 0.5rem;
+}
+
+.doctor-actions button,
+.doctor-actions a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+.book-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.book-btn i {
+    font-size: 0.9em;
+}
+
+/* Update grid layout */
+@media (min-width: 768px) {
+    .col-md-6 {
+        padding: 0 10px;
+    }
+    
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .col-lg-4 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+} 

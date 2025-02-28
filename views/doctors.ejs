@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Doctors - Doctor Appointment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --primary-color: #12ac8e;
+            --primary-color-dark: #0d846c;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        .doctors-header {
+            background: linear-gradient(rgba(18, 172, 142, 0.9), rgba(18, 172, 142, 0.9)), url('/images/doctors-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .doctor-image {
+            width: 80%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .doctor-info {
+            padding: 1.5rem;
+        }
+
+        .doctor-name {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-speciality {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-details {
+            margin-bottom: 1rem;
+        }
+
+        .doctor-details i {
+            color: var(--primary-color);
+            width: 20px;
+            margin-right: 0.5rem;
+        }
+
+        .btn-book {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-book:hover {
+            background-color: var(--primary-color-dark);
+            color: white;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="doctors-header">
+        <div class="container">
+            <h1>Our Expert Doctors</h1>
+            <p class="lead">Meet our team of experienced healthcare professionals</p>
+        </div>
+    </div>
+<!---
+    <div class="container">
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Specialization</label>
+                        <select class="form-select" id="specialization">
+                            <option value="">All Specializations</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Dermatology">Dermatology</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Experience</label>
+                        <select class="form-select" id="experience">
+                            <option value="">Any Experience</option>
+                            <option value="0-5">0-5 years</option>
+                            <option value="5-10">5-10 years</option>
+                            <option value="10+">10+ years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Availability</label>
+                        <select class="form-select" id="availability">
+                            <option value="">Any Time</option>
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="evening">Evening</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    -->
+    <div class="row g-3" id="doctorsList">
+        <% doctors.forEach((doctor, index) => { %>
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="doctor-card">
+                    <% 
+                        let imageUrl;
+                        if (doctor.gender === 'female') {
+                            // Unique female doctor images
+                            const femaleImages = [
+                                '/images/doctors/female-doctor-1.jpg',
+                                '/images/doctors/female-doctor-2.jpg',
+                                '/images/doctors/female-doctor-3.jpg',
+                                '/images/doctors/female-doctor-4.jpg'
+                            ];
+                            imageUrl = femaleImages[index % femaleImages.length];
+                        } else {
+                            // Unique male doctor images
+                            const maleImages = [
+                                '/images/doctors/male-doctor-1.jpg',
+                                '/images/doctors/male-doctor-2.jpg',
+                                '/images/doctors/male-doctor-3.jpg',
+                                '/images/doctors/male-doctor-4.jpg'
+                            ];
+                            imageUrl = maleImages[index % maleImages.length];
+                        }
+                        
+                        // Fallback images if the custom ones don't exist
+                        const fallbackImage = doctor.gender === 'female' 
+                            ? '/images/default-female-doctor.png'
+                            : '/images/default-male-doctor.png';
+                    %>
+                    <img 
+                        src="data:image/png;base64,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" 
+                        onerror="this.onerror=null; this.src='<%= fallbackImage %>'" 
+                        alt="Dr. <%= doctor.first_name %>"
+                        class="doctor-image"
+                    >
+                    <h3 class="doctor-name">Dr. <%= doctor.first_name %> <%= doctor.last_name %></h3>
+                    <p class="doctor-specialization"><%= doctor.specialization %></p>
+                    
+                    <div class="doctor-info">
+                        <p><i class="fas fa-graduation-cap"></i> <%= doctor.qualification %></p>
+                        <p><i class="fas fa-clock"></i> <%= doctor.experience_years %> years experience</p>
+                        <p><i class="fas fa-stethoscope"></i> <%= doctor.specialization %></p>
+                        <p><i class="fas fa-money-bill-wave"></i> Consultation Fee: ₹<%= doctor.consultation_fee %></p>
+                    </div>
+
+                    <div class="doctor-actions">
+                        <!-- 
+                        <button class="btn btn-outline-primary" onclick="viewDoctorProfile('<%- doctor.id %>')">
+                            <i class="fas fa-user-md"></i> View Profile
+                        </button>
+                        -->
+
+                        <a href="/login" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewDoctorProfile(doctorId) {
+            // Implement doctor profile view functionality
+            window.location.href = `/doctors/${doctorId}`;
+        }
+    </script>
+</body>
+</html>

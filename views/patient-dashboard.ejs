@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .doctor-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .doctor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .doctor-header h4 {
+            margin: 0;
+            color: #2563eb;
+        }
+
+        .gender-badge {
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .qualification-section {
+            margin-bottom: 20px;
+        }
+
+        .qualification-item {
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .qualification-item .label {
+            color: #64748b;
+            width: 120px;
+            display: inline-block;
+        }
+
+        .qualification-item .value {
+            color: #1e293b;
+            font-weight: 500;
+            cursor: help;
+        }
+
+        .qualification-item i {
+            margin-right: 8px;
+            color: #2563eb;
+        }
+
+        .tooltip-text {
+            display: none;
+            position: absolute;
+            background: #1e293b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            width: 250px;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .qualification-item:hover .tooltip-text {
+            display: block;
+        }
+
+        .doctor-actions {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .book-appointment {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .book-appointment:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>Patient Portal</h3>
+                <p class="user-name"><%= user.name %></p>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="overview">
+                    <a href="#"><i class="fas fa-home"></i> Overview</a>
+                </li>
+                <li data-section="profile">
+                    <a href="#"><i class="fas fa-user"></i> My Profile</a>
+                </li>
+                <li data-section="book-appointment">
+                    <a href="#"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
+                </li>
+                <li data-section="appointments">
+                    <a href="#"><i class="fas fa-calendar"></i> My Appointments</a>
+                </li>
+                <!--<li data-section="medical-records">
+                    <a href="#"><i class="fas fa-file-medical"></i> Medical Records</a>
+                </li>-->
+                <li data-section="doctors-directory">
+                    <a href="#"><i class="fas fa-user-md"></i> Find Doctors</a>
+                </li>
+                <li>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <h2>Welcome, <%= name %></h2>
+                <div class="overview-cards">
+                    <div class="card">
+                        <h3>Upcoming Appointments</h3>
+                        <p class="count"><%= stats.upcomingAppointments %></p>
+                    </div>
+                    <div class="card">
+                        <h3>Past Appointments</h3>
+                        <p class="count"><%= stats.pastAppointments %></p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Appointments</h3>
+                        <p class="count"><%= stats.totalAppointments %></p>
+                    </div>
+                </div>
+                
+                <div class="recent-appointments">
+                    <h3>Recent Appointments</h3>
+                    <% if (recentAppointments && recentAppointments.length > 0) { %>
+                        <div class="appointments-list">
+                            <% recentAppointments.forEach(function(appointment) { %>
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <h4>Dr. <%= appointment.doctor_name %></h4>
+                                        <span class="status-badge <%= appointment.status_class %>">
+                                            <%= appointment.status %>
+                                        </span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <p><i class="fas fa-calendar"></i> <%= appointment.appointment_date %></p>
+                                        <p><i class="fas fa-clock"></i> <%= appointment.appointment_time %></p>
+                                        <p><i class="fas fa-stethoscope"></i> <%= appointment.specialization %></p>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <p class="no-appointments">No recent appointments</p>
+                    <% } %>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="dashboard-section">
+                <h2>My Profile</h2>
+                <div class="profile-info">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" value="<%= name %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="<%= email %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" value="<%= phone %>" id="phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="address"><%= patient.address || '' %></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Book Appointment Section -->
+            <section id="book-appointment" class="dashboard-section">
+                <h2>Book New Appointment</h2>
+                <div class="appointment-form-container">
+                    <form id="appointmentForm" class="appointment-form">
+                        <!-- Doctor Selection -->
+                        <div class="form-group">
+                            <label for="specialization">Select Specialization</label>
+                            <select id="specializationSelect" class="form-control" required>
+                                <option value="">Choose Specialization</option>
+                                <option value="Cardiologist">Cardiologist</option>
+                                <option value="Dermatologist">Dermatologist</option>
+                                <option value="Neurologist">Neurologist</option>
+                                <option value="Pediatrician">Pediatrician</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                                <option value="Gynecologist">Gynecologist</option>
+                                <option value="Dentist">Dentist</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="doctorSelect">Select Doctor</label>
+                            <select id="doctorSelect" class="form-control" required>
+                                <option value="">First select specialization</option>
+                            </select>
+                            <div class="doctor-info" id="doctorInfo" style="display: none;">
+                                <p><strong>Experience:</strong> <span id="doctorExperience"></span> years</p>
+                                <p><strong>Qualification:</strong> <span id="doctorQualification"></span></p>
+                                <p><strong>Consultation Fee:</strong> ₹<span id="consultationFee"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- Appointment Date and Time -->
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="appointmentDate">Appointment Date</label>
+                                <input type="date" id="appointmentDate" class="form-control" required>
+                                <small class="text-muted">Select a date within next 30 days</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="appointmentTime">Appointment Time</label>
+                                <select id="appointmentTime" class="form-control" required>
+                                    <option value="">Select Time Slot</option>
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="09:30">09:30 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="14:30">02:30 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="16:30">04:30 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Symptoms -->
+                        <div class="form-group">
+                            <label for="symptoms">Symptoms/Reason for Visit</label>
+                            <textarea id="symptoms" class="form-control" rows="3" required 
+                                placeholder="Please describe your symptoms or reason for consultation"></textarea>
+                        </div>
+
+                        <!-- Terms and Submit -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="termsCheck" required>
+                                <label class="custom-control-label" for="termsCheck">
+                                    I confirm that the information provided is accurate and agree to the appointment terms
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Book Appointment</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments" class="dashboard-section">
+                <h2>My Appointments</h2>
+                <div class="appointments-filter">
+                    <button class="btn btn-outline-primary active" data-filter="all">All</button>
+                <!--
+                    <button class="btn btn-outline-primary" data-filter="upcoming">Upcoming</button>
+                    <button class="btn btn-outline-primary" data-filter="past">Past</button> -->
+                </div>
+                
+                <div id="appointmentsList">
+                    <% if (appointments && appointments.length > 0) { %>
+                        <% appointments.forEach(function(appointment) { %>
+                            <div class="appointment-card">
+                                <div class="appointment-header">
+                                    <h4>Dr. <%= appointment.doctor_name %></h4>
+                                    <span class="status-badge <%= appointment.status_class %>">
+                                        <%= appointment.status.toUpperCase() %>
+                                    </span>
+                                </div>
+                                <div class="appointment-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label"><i class="fas fa-calendar"></i> Date:</span>
+                                        <span class="detail-value"><%= new Date(appointment.appointment_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label"><i class="fas fa-clock"></i> Time:</span>
+                                        <span class="detail-value"><%= new Date('1970-01-01T' + appointment.appointment_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) %></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label"><i class="fas fa-stethoscope"></i> Specialization:</span>
+                                        <span class="detail-value"><%= appointment.specialization %></span>
+                                    </div>
+                                    <% if (appointment.symptoms) { %>
+                                        <div class="detail-row">
+                                            <span class="detail-label"><i class="fas fa-notes-medical"></i> Symptoms:</span>
+                                            <span class="detail-value"><%= appointment.symptoms %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <% if (appointment.can_cancel) { %>
+                                    <div class="appointment-actions">
+                                        <button class="btn btn-danger btn-sm" onclick="cancelAppointment('<%= appointment.id %>')">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="no-appointments">No appointments found.</p>
+                    <% } %>
+                </div>
+            </section>
+
+            <!-- Medical Records Section -->
+            <section id="medical-records" class="dashboard-section">
+                <h2>Medical Records</h2>
+                <div id="medicalRecordsList"></div>
+            </section>
+
+            <!-- Doctors Directory Section -->
+            <section id="doctors-directory" class="dashboard-section">
+                <h2>Find Doctors</h2>
+                
+                <div class="specialization-filter mb-3">
+                    <button class="btn btn-outline-primary active" data-filter="all">All Specializations</button>
+                </div>
+
+                <div class="doctors-grid">
+                    <% doctors.forEach(function(doctor) { %>
+                        <div class="doctor-card" data-specialization="<%= doctor.specialization %>">
+                            <div class="doctor-info">
+                                <div class="doctor-header">
+                                    <h4>Dr. <%= doctor.first_name %> <%= doctor.last_name %></h4>
+                                    <span class="gender-badge"><%= doctor.gender %></span>
+                                </div>
+                                
+                                <div class="qualification-section">
+                                    <div class="qualification-item">
+                                        <span class="label"><i class="fas fa-graduation-cap"></i> Qualification:</span>
+                                        <span class="value" title="Medical Degree/Specialization"><%= doctor.qualification %></span>
+                                        <span class="tooltip-text">Medical degree and specialization (e.g., MS Orthopedics = Master of Surgery in Orthopedics)</span>
+                                    </div>
+                                    
+                                    <div class="qualification-item">
+                                        <span class="label"><i class="fas fa-stethoscope"></i> Specialization:</span>
+                                        <span class="value"><%= doctor.specialization %></span>
+                                    </div>
+
+                                    <div class="qualification-item">
+                                        <span class="label"><i class="fas fa-clock"></i> Experience:</span>
+                                        <span class="value" title="Years of Medical Practice">
+                                            <%= doctor.experience_years %> years
+                                        </span>
+                                        <span class="tooltip-text">Total years of professional medical practice after qualification</span>
+                                    </div>
+
+                                    <div class="qualification-item">
+                                        <span class="label"><i class="fas fa-rupee-sign"></i> Consultation Fee:</span>
+                                        <span class="value" title="Fee per consultation">
+                                            ₹<%= parseFloat(doctor.consultation_fee || 0).toFixed(2) %>
+                                        </span>
+                                        <span class="tooltip-text">Fee charged per consultation session</span>
+                                    </div>
+                                </div>
+
+                                <div class="doctor-actions">
+                                    <button class="btn btn-primary book-appointment" 
+                                            data-doctor-id="<%= doctor.id %>"
+                                            data-doctor-name="Dr. <%= doctor.first_name %> <%= doctor.last_name %>"
+                                            onclick="selectDoctor('<%= doctor.id %>')">
+                                        Book Appointment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
+    <script src="/js/patient-dashboard.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Navigation handling
+            $('.nav-links li').click(function(e) {
+                if (!$(this).hasClass('active') && !$(this).find('a').attr('href').startsWith('/')) {
+                    e.preventDefault();
+                    $('.nav-links li').removeClass('active');
+                    $(this).addClass('active');
+                    
+                    const section = $(this).data('section');
+                    $('.dashboard-section').removeClass('active');
+                    $(`#${section}`).addClass('active');
+
+                    // If appointments section is clicked, refresh the appointments
+                    if (section === 'appointments') {
+                        refreshAppointments();
+                    }
+                }
+            });
+
+            // Book appointment form submission
+            $('#appointmentForm').submit(function(e) {
+                e.preventDefault();
+                const formData = {
+                    doctor_id: $('#doctorSelect').val(),
+                    appointment_date: $('#appointmentDate').val(),
+                    appointment_time: $('#appointmentTime').val(),
+                    symptoms: $('#symptoms').val()
+                };
+
+                $.ajax({
+                    url: '/api/appointments',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Appointment booked successfully!');
+                            // Clear the form
+                            $('#appointmentForm')[0].reset();
+                            // Refresh appointments list
+                            refreshAppointments();
+                            // Update stats
+                            updateDashboardStats();
+                            // Switch to appointments section
+                            $('.nav-links li[data-section="appointments"]').click();
+                        } else {
+                            alert('Failed to book appointment: ' + response.error);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error booking appointment: ' + xhr.responseJSON?.error || 'Unknown error');
+                    }
+                });
+            });
+
+            // Function to refresh appointments
+            function refreshAppointments() {
+                $.get('/api/patient/appointments', function(data) {
+                    const appointmentsList = $('#appointmentsList');
+                    appointmentsList.empty();
+
+                    if (data && data.length > 0) {
+                        data.forEach(function(appointment) {
+                            const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString('en-US', { 
+                                weekday: 'long', 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            });
+                            const appointmentTime = new Date('1970-01-01T' + appointment.appointment_time).toLocaleTimeString('en-US', { 
+                                hour: 'numeric', 
+                                minute: 'numeric', 
+                                hour12: true 
+                            });
+
+                            const appointmentCard = `
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <h4>Dr. ${appointment.doctor_name}</h4>
+                                        <span class="status-badge ${appointment.status.toLowerCase()}">
+                                            ${appointment.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="detail-row">
+                                            <span class="detail-label"><i class="fas fa-calendar"></i> Date:</span>
+                                            <span class="detail-value">${appointmentDate}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label"><i class="fas fa-clock"></i> Time:</span>
+                                            <span class="detail-value">${appointmentTime}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span class="detail-label"><i class="fas fa-stethoscope"></i> Specialization:</span>
+                                            <span class="detail-value">${appointment.specialization}</span>
+                                        </div>
+                                        ${appointment.symptoms ? `
+                                            <div class="detail-row">
+                                                <span class="detail-label"><i class="fas fa-notes-medical"></i> Symptoms:</span>
+                                                <span class="detail-value">${appointment.symptoms}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${appointment.status === 'pending' ? `
+                                            <div class="appointment-actions">
+                                                <button class="btn btn-danger btn-sm" onclick="cancelAppointment(${appointment.id})">
+                                                    Cancel Appointment
+                                                </button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                            appointmentsList.append(appointmentCard);
+                        });
+                    } else {
+                        appointmentsList.html('<p class="no-appointments">No appointments found</p>');
+                    }
+                });
+            }
+
+            // Function to update dashboard stats
+            function updateDashboardStats() {
+                $.get('/api/patient/appointments', function(data) {
+                    if (data) {
+                        const now = new Date();
+                        const stats = {
+                            totalAppointments: data.length,
+                            upcomingAppointments: data.filter(a => new Date(a.appointment_date) >= now).length,
+                            pastAppointments: data.filter(a => new Date(a.appointment_date) < now).length
+                        };
+
+                        // Update stats in overview section
+                        $('.overview-cards .count').each(function() {
+                            const card = $(this).parent();
+                            const title = card.find('h3').text().toLowerCase();
+                            if (title.includes('upcoming')) {
+                                $(this).text(stats.upcomingAppointments);
+                            } else if (title.includes('past')) {
+                                $(this).text(stats.pastAppointments);
+                            } else if (title.includes('total')) {
+                                $(this).text(stats.totalAppointments);
+                            }
+                        });
+
+                        // Update recent appointments
+                        const recentAppointments = data.slice(0, 5);
+                        const recentAppointmentsList = $('.recent-appointments .appointments-list');
+                        recentAppointmentsList.empty();
+
+                        if (recentAppointments.length > 0) {
+                            recentAppointments.forEach(function(appointment) {
+                                const appointmentDate = new Date(appointment.appointment_date).toLocaleDateString();
+                                const appointmentCard = `
+                                    <div class="appointment-card">
+                                        <div class="appointment-header">
+                                            <h4>Dr. ${appointment.doctor_name}</h4>
+                                            <span class="status-badge ${appointment.status.toLowerCase()}">
+                                                ${appointment.status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div class="appointment-details">
+                                            <p><i class="fas fa-calendar"></i> ${appointmentDate}</p>
+                                            <p><i class="fas fa-clock"></i> ${appointment.appointment_time}</p>
+                                            <p><i class="fas fa-stethoscope"></i> ${appointment.specialization}</p>
+                                        </div>
+                                    </div>
+                                `;
+                                recentAppointmentsList.append(appointmentCard);
+                            });
+                        } else {
+                            recentAppointmentsList.html('<p class="no-appointments">No recent appointments</p>');
+                        }
+                    }
+                });
+            }
+
+            // Cancel appointment function
+            window.cancelAppointment = function(appointmentId) {
+                if (confirm('Are you sure you want to cancel this appointment?')) {
+                    $.ajax({
+                        url: `/api/appointments/${appointmentId}/cancel`,
+                        method: 'PUT',
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Appointment cancelled successfully');
+                                refreshAppointments();
+                                updateDashboardStats();
+                            } else {
+                                alert('Failed to cancel appointment: ' + response.error);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error cancelling appointment: ' + xhr.responseJSON?.error || 'Unknown error');
+                        }
+                    });
+                }
+            };
+        });
+    </script>
+</body>
+</html>

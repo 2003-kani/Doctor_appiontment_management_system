@@ -1,0 +1,66 @@
+/* Doctors Section */
+#doctorsList .card {
+    transition: transform 0.3s;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#doctorsList .card:hover {
+    transform: translateY(-10px);
+}
+
+#doctorsList .card img {
+    border: 3px solid #007bff;
+    margin-bottom: 15px;
+}
+
+#doctorsList .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#doctorsList .card-text {
+    font-size: 1rem;
+    color: #555;
+}
+/* Doctors Section */
+#doctorsList .card {
+    transition: transform 0.3s;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+#doctorsList .card:hover {
+    transform: translateY(-10px);
+}
+
+#doctorsList .card img {
+    border: 3px solid #007bff;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 20px auto;
+}
+
+#doctorsList .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+#doctorsList .card-text {
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+}
+
+#doctorsList .btn {
+    display: block;
+    width: 80%;
+    margin: 0 auto 20px;
+}

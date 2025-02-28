@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - DoctorHealthcare</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.4.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+        :root {
+            --primary-color: #12ac8e;
+            --primary-color-dark: #0d846c;
+            --primary-color-light: #e9f7f7;
+            --secondary-color: #fb923c;
+            --text-dark: #333333;
+            --text-light: #767268;
+            --white: #ffffff;
+            --max-width: 1200px;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav__container {
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--primary-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav__logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .nav__logo span {
+            color: var(--secondary-color);
+        }
+
+        .nav__links {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav__link {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav__link:hover {
+            color: var(--secondary-color);
+        }
+
+        .error__container {
+            max-width: var(--max-width);
+            margin: 120px auto 40px;
+            padding: 2rem;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .error__icon {
+            font-size: 5rem;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+
+        .error__title {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .error__message {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .error__btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: var(--secondary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .error__btn:hover {
+            background: #f97316;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .error__title {
+                font-size: 2rem;
+            }
+
+            .error__icon {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav__container">
+        <a href="/" class="nav__logo">Doctor<span>Healthcare</span></a>
+        <ul class="nav__links">
+            <li><a href="/" class="nav__link">Home</a></li>
+            <li><a href="/services" class="nav__link">Services</a></li>
+            <li><a href="/doctors" class="nav__link">Doctors</a></li>
+            <li><a href="/about" class="nav__link">About</a></li>
+            <li><a href="/contact" class="nav__link">Contact</a></li>
+            <li><a href="/login" class="nav__link">Login</a></li>
+        </ul>
+    </nav>
+
+    <div class="error__container">
+        <i class="ri-error-warning-line error__icon"></i>
+        <h1 class="error__title">Oops! Something went wrong</h1>
+        <p class="error__message"><%= message || 'An unexpected error occurred. Please try again later.' %></p>
+        <a href="/" class="error__btn">Go Back Home</a>
+    </div>
+</body>
+</html>

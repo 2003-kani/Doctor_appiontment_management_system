@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Portal</h3>
+                <p class="user-name">Admin</p>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="overview">
+                    <a href="#"><i class="fas fa-home"></i> Overview</a>
+                </li>
+                <li data-section="doctors">
+                    <a href="#"><i class="fas fa-user-md"></i> Manage Doctors</a>
+                </li>
+                <li data-section="patients">
+                    <a href="#"><i class="fas fa-users"></i> Manage Patients</a>
+                </li>
+                <li data-section="appointments">
+                    <a href="#"><i class="fas fa-calendar"></i> All Appointments</a>
+                </li>
+                <li data-section="reports">
+                    <a href="#"><i class="fas fa-chart-bar"></i> Reports</a>
+                </li>
+                <li>
+                    <a href="/admin/create-doctor" class="nav-link">
+                        <i class="fas fa-plus"></i> Add New Doctor
+                    </a>
+                </li>
+                <li>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <!-- Overview Section -->
+            <section id="overview" class="dashboard-section active">
+                <h2>Dashboard Overview</h2>
+                <div class="overview-cards">
+                    <div class="card">
+                        <h3>Total Doctors</h3>
+                        <p class="count" id="doctorsCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Patients</h3>
+                        <p class="count" id="patientsCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Appointments</h3>
+                        <p class="count" id="appointmentsCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pending Appointments</h3>
+                        <p class="count" id="pendingCount">0</p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <a href="/admin/create-doctor" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add New Doctor
+                        </a>
+                        <button class="btn btn-secondary" onclick="generateReport()">
+                            <i class="fas fa-file-alt"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors" class="dashboard-section">
+                <h2>Manage Doctors</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialization</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorsTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patients Section -->
+            <section id="patients" class="dashboard-section">
+                <h2>Manage Patients</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registered Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments" class="dashboard-section">
+                <h2>All Appointments</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="dashboard-section">
+                <h2>Generate Reports</h2>
+                <div class="report-controls mb-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="reportType" class="form-label">Report Type</label>
+                            <select class="form-select" id="reportType">
+                                <option value="appointments">Appointments Summary</option>
+                                <option value="doctors">Doctors Performance</option>
+                                <option value="patients">Patient Statistics</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="reportResults" class="mt-4">
+                    <!-- Report results will be displayed here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Navigation
+            $('.nav-links li').click(function(e) {
+                if (!$(this).find('a').attr('href').startsWith('/')) {
+                    e.preventDefault();
+                    $('.nav-links li').removeClass('active');
+                    $(this).addClass('active');
+                    
+                    const section = $(this).data('section');
+                    $('.dashboard-section').removeClass('active');
+                    $(`#${section}`).addClass('active');
+
+                    // Load section data
+                    if (section === 'doctors') loadDoctors();
+                    if (section === 'patients') loadPatients();
+                    if (section === 'appointments') loadAppointments();
+                }
+            });
+
+            // Load initial data
+            loadOverviewData();
+        });
+
+        function loadOverviewData() {
+            $.get('/api/admin/stats')
+                .done(function(data) {
+                    $('#doctorsCount').text(data.totalDoctors);
+                    $('#patientsCount').text(data.totalPatients);
+                    $('#appointmentsCount').text(data.totalAppointments);
+                    $('#pendingCount').text(data.pendingAppointments);
+                })
+                .fail(function(xhr) {
+                    console.error('Error loading overview data:', xhr);
+                    alert('Error loading statistics. Please refresh the page.');
+                });
+        }
+
+        function loadDoctors() {
+            $.get('/api/admin/doctors')
+                .done(function(data) {
+                    const html = data.map(doctor => `
+                        <tr>
+                            <td>Dr. ${doctor.first_name} ${doctor.last_name}</td>
+                            <td>${doctor.specialization}</td>
+                            <td>${doctor.email}</td>
+                            <td>${doctor.phone}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="editDoctor(${doctor.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDoctor(${doctor.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    $('#doctorsTableBody').html(html || '<tr><td colspan="5">No doctors found</td></tr>');
+                })
+                .fail(function(xhr) {
+                    console.error('Error loading doctors:', xhr);
+                    $('#doctorsTableBody').html('<tr><td colspan="5">Error loading doctors</td></tr>');
+                });
+        }
+
+        function loadPatients() {
+            $.get('/api/admin/patients', function(data) {
+                const html = data.map(patient => `
+                    <tr>
+                        <td>${patient.first_name} ${patient.last_name}</td>
+                        <td>${patient.email}</td>
+                        <td>${patient.phone}</td>
+                        <td>${new Date(patient.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewPatient(${patient.id})">View</button>
+                        </td>
+                    </tr>
+                `).join('');
+                $('#patientsTableBody').html(html);
+            });
+        }
+
+        function loadAppointments() {
+            $.get('/api/admin/appointments', function(data) {
+                const html = data.map(appointment => `
+                    <tr>
+                        <td>${appointment.patient_name}</td>
+                        <td>Dr. ${appointment.doctor_name}</td>
+                        <td>${new Date(appointment.appointment_date).toLocaleDateString()}</td>
+                        <td>${appointment.appointment_time}</td>
+                        <td><span class="status-${appointment.status}">${appointment.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(${appointment.id}, 'confirmed')">Confirm</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(${appointment.id}, 'cancelled')">Cancel</button>
+                        </td>
+                    </tr>
+                `).join('');
+                $('#appointmentsTableBody').html(html);
+            });
+        }
+
+        function editDoctor(doctorId) {
+            $.ajax({
+                url: `/api/admin/doctors/${doctorId}`,
+                method: 'GET',
+                success: function(doctor) {
+                    // Show edit modal with doctor details
+                    $('#editDoctorModal').modal('show');
+                    $('#editDoctorForm').data('doctorId', doctorId);
+                    $('#editName').val(doctor.name);
+                    $('#editSpecialization').val(doctor.specialization);
+                    $('#editPhone').val(doctor.phone);
+                    $('#editFee').val(doctor.consultation_fee);
+                }
+            });
+        }
+
+        function deleteDoctor(doctorId) {
+            if (confirm('Are you sure you want to delete this doctor?')) {
+                $.ajax({
+                    url: `/api/admin/doctors/${doctorId}`,
+                    method: 'DELETE',
+                    success: function() {
+                        loadDoctors(); // Refresh the list
+                        alert('Doctor deleted successfully');
+                    },
+                    error: function() {
+                        alert('Failed to delete doctor');
+                    }
+                });
+            }
+        }
+
+        function updateStatus(appointmentId, status) {
+            $.ajax({
+                url: `/api/admin/appointments/${appointmentId}/status`,
+                method: 'PUT',
+                data: { status },
+                success: function() {
+                    loadAppointments(); // Refresh appointments list
+                    alert(`Appointment ${status} successfully`);
+                },
+                error: function() {
+                    alert('Failed to update appointment status');
+                }
+            });
+        }
+
+        function viewPatient(patientId) {
+            $.ajax({
+                url: `/api/admin/patients/${patientId}`,
+                method: 'GET',
+                success: function(patient) {
+                    // Show patient details modal
+                    $('#patientDetailsModal').modal('show');
+                    $('#patientName').text(patient.name);
+                    $('#patientEmail').text(patient.email);
+                    $('#patientPhone').text(patient.phone);
+                    $('#patientDOB').text(patient.dob);
+                    $('#patientGender').text(patient.gender);
+                }
+            });
+        }
+
+        // Report generation function
+        function generateReport() {
+            const reportType = $('#reportType').val();
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            console.log('Generating report:', { reportType, startDate, endDate });
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            // Show loading state
+            $('#reportResults').html('<div class="text-center"><div class="spinner-border" role="status"></div><p>Generating report...</p></div>');
+
+            $.ajax({
+                url: '/api/admin/reports',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    type: reportType,
+                    startDate: startDate,
+                    endDate: endDate
+                }),
+                success: function(response) {
+                    console.log('Report data received:', response);
+                    displayReport(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Report generation error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    
+                    let errorMessage = 'Error generating report. ';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMessage += response.error || 'Please try again.';
+                    } catch (e) {
+                        errorMessage += 'Please try again.';
+                    }
+                    
+                    alert(errorMessage);
+                    $('#reportResults').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                }
+            });
+        }
+
+        function displayReport(data) {
+            console.log('Displaying report:', data);
+            
+            if (!data) {
+                $('#reportResults').html('<div class="alert alert-danger">No data received from server</div>');
+                return;
+            }
+
+            let html = '<div class="report-container">';
+            
+            if (data.type === 'appointments') {
+                html += `
+                    <h3>Appointments Summary (${data.startDate} to ${data.endDate})</h3>
+                    <div class="report-stats">
+                        <div class="stat-item">
+                            <h4>Total Appointments</h4>
+                            <p>${data.totalAppointments || 0}</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Completed</h4>
+                            <p>${data.completed || 0}</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Cancelled</h4>
+                            <p>${data.cancelled || 0}</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>No-Show</h4>
+                            <p>${data.noShow || 0}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (data.type === 'doctors') {
+                html += `
+                    <h3>Doctors Performance (${data.startDate} to ${data.endDate})</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Doctor Name</th>
+                                <th>Total Appointments</th>
+                                <th>Completed</th>
+                                <th>Cancelled</th>
+                                <th>No-Show Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(data.doctors || []).map(doc => `
+                                <tr>
+                                    <td>${doc.name || 'N/A'}</td>
+                                    <td>${doc.totalAppointments || 0}</td>
+                                    <td>${doc.completed || 0}</td>
+                                    <td>${doc.cancelled || 0}</td>
+                                    <td>${doc.noShowRate || 0}%</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (data.type === 'patients') {
+                html += `
+                    <h3>Patient Statistics (${data.startDate} to ${data.endDate})</h3>
+                    <div class="report-stats">
+                        <div class="stat-item">
+                            <h4>Total Patients</h4>
+                            <p>${data.totalPatients || 0}</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>New Patients</h4>
+                            <p>${data.newPatients || 0}</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Avg. Appointments per Patient</h4>
+                            <p>${data.avgAppointments || 0}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            $('#reportResults').html(html);
+        }
+    </script>
+</body>
+</html>
