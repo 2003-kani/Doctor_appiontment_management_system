@@ -52,6 +52,7 @@ $(document).ready(function() {
     // Update the specialization dropdown
     $('#specializationSelect').html(`
         <option value="">Choose Specialization</option>
+        <option value="General Physician">General Physician</option>
         <option value="Cardiologist">Cardiologist</option>
         <option value="Dermatologist">Dermatologist</option>
         <option value="Neurologist">Neurologist</option>
@@ -232,36 +233,48 @@ loadAppointments('upcoming');
 
 // Cancel appointment function
 function cancelAppointment(appointmentId) {
-    if (!confirm('Are you sure you want to cancel this appointment?')) {
-        return;
+    if (confirm('Are you sure you want to cancel this appointment?')) {
+        $.ajax({
+            url: `/api/appointments/${appointmentId}/cancel`,
+            method: 'PUT',
+            success: function(response) {
+                if (response.success) {
+                    showAlert('success', 'Appointment cancelled successfully');
+                    loadAppointments($('.appointment-filter.active').data('filter'));
+                } else {
+                    showAlert('error', response.error || 'Error cancelling appointment');
+                }
+            },
+            error: function(xhr) {
+                const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Error cancelling appointment. Please try again.';
+                showAlert('error', errorMsg);
+                console.error('Error:', xhr.responseText);
+            }
+        });
     }
-
-    $.ajax({
-        url: `/api/appointments/${appointmentId}/cancel`,
-        method: 'PUT',
-        success: function(response) {
-            showAlert('success', 'Appointment cancelled successfully');
-            loadAppointments($('.appointment-filter.active').data('filter'));
-        },
-        error: function(error) {
-            console.error('Error cancelling appointment:', error);
-            showAlert('error', 'Failed to cancel appointment. Please try again.');
-        }
-    });
 }
 
 // Helper function to show alerts
 function showAlert(type, message) {
     const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    const alert = `
+    const alertHtml = `
         <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
-    $('#alert-container').html(alert);
+    
+    // Remove any existing alerts
+    $('.alert').remove();
+    
+    // Add the new alert at the top of the appointments section
+    $('#appointments').prepend(alertHtml);
+    
+    // Auto dismiss after 5 seconds
     setTimeout(() => {
-        $('.alert').alert('close');
+        $('.alert').fadeOut('slow', function() {
+            $(this).remove();
+        });
     }, 5000);
 }
 
@@ -449,15 +462,15 @@ function cancelAppointment(appointmentId) {
             method: 'PUT',
             success: function(response) {
                 if (response.success) {
-                    alert('Appointment cancelled successfully');
+                    showAlert('success', 'Appointment cancelled successfully');
                     loadAppointments('all'); // Reload appointments instead of full page
                 } else {
-                    alert(response.error || 'Error cancelling appointment');
+                    showAlert('error', response.error || 'Error cancelling appointment');
                 }
             },
             error: function(xhr) {
                 const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Error cancelling appointment. Please try again.';
-                alert(errorMsg);
+                showAlert('error', errorMsg);
                 console.error('Error:', xhr.responseText);
             }
         });

@@ -24,7 +24,31 @@ $(document).ready(function() {
     // Trigger upcoming filter by default
     $('.appointments-filter button[data-filter="upcoming"]').click();
 });
-/*
+
+// Helper function to show alerts
+function showAlert(type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Remove any existing alerts
+    $('.alert').remove();
+    
+    // Add the new alert at the top of the current section
+    $('.dashboard-section.active').prepend(alertHtml);
+    
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        $('.alert').fadeOut('slow', function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+
 // Appointment status update function
 function updateAppointmentStatus(appointmentId, status) {
     if (confirm(`Are you sure you want to ${status} this appointment?`)) {
@@ -35,45 +59,25 @@ function updateAppointmentStatus(appointmentId, status) {
             data: JSON.stringify({ status: status }),
             success: function(response) {
                 if (response.success) {
-                    alert(response.message || 'Appointment status updated successfully');
-                    loadAppointments('all'); // Reload appointments instead of full page refresh
+                    showAlert('success', `Appointment ${status} successfully`);
+                    loadAppointments('all'); // Reload appointments
                 } else {
-                    alert(response.error || 'Error updating appointment status');
+                    showAlert('error', response.error || `Error ${status}ing appointment`);
                 }
             },
             error: function(xhr) {
-                const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Error updating appointment status. Please try again.';
-                alert(errorMsg);
+                const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : `Error ${status}ing appointment. Please try again.`;
+                showAlert('error', errorMsg);
                 console.error('Error:', xhr.responseText);
             }
         });
     }
-} */
-    function updateAppointmentStatus(appointmentId, status) {
-        if (confirm(`Are you sure you want to ${status} this appointment?`)) {
-            $.ajax({
-                url: `/api/appointments/${appointmentId}/status`,
-                method: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify({ status: status }),
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message || 'Status updated successfully');
-                        loadAppointments('all');
-                    } else {
-                        alert(response.error || 'Error updating status');
-                    }
-                },
-                error: function(xhr) {
-                    const errorMsg = xhr.responseJSON ? 
-                        xhr.responseJSON.error : 
-                        'Error updating status. Please try again.';
-                    alert(errorMsg);
-                    console.error('Error:', xhr.responseText);
-                }
-            });
-        }
-    }
+}
+
+// Function to cancel appointment (for consistency with patient dashboard)
+function cancelAppointment(appointmentId) {
+    updateAppointmentStatus(appointmentId, 'cancelled');
+}
 
 // Function to load appointments
 function loadAppointments(filter = 'all') {
@@ -86,16 +90,31 @@ function loadAppointments(filter = 'all') {
                 const appointmentsTable = $('#appointments-table tbody');
                 appointmentsTable.empty();
                 
-                response.appointments.forEach(appointment => {
-                    const row = createAppointmentRow(appointment);
-                    appointmentsTable.append(row);
-                });
+                if (response.appointments.length === 0) {
+                    appointmentsTable.html(`
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="p-3">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No ${filter} appointments found</h5>
+                                </div>
+                            </td>
+                        </tr>
+                    `);
+                } else {
+                    response.appointments.forEach(appointment => {
+                        const row = createAppointmentRow(appointment);
+                        appointmentsTable.append(row);
+                    });
+                }
             } else {
                 console.error('Failed to load appointments:', response.error);
+                showAlert('error', 'Failed to load appointments');
             }
         },
         error: function(xhr) {
             console.error('Error loading appointments:', xhr.responseText);
+            showAlert('error', 'Error loading appointments. Please try again.');
         }
     });
 }
@@ -136,7 +155,7 @@ function getActionButtons(appointment) {
     if (appointment.status === 'pending') {
         return `
             <button onclick="updateAppointmentStatus(${appointment.id}, 'confirmed')" class="btn btn-sm btn-success">Confirm</button>
-            <button onclick="updateAppointmentStatus(${appointment.id}, 'cancelled')" class="btn btn-sm btn-danger">Cancel</button>
+            <button onclick="cancelAppointment(${appointment.id})" class="btn btn-sm btn-danger">Cancel</button>
         `;
     } else if (appointment.status === 'confirmed') {
         return `

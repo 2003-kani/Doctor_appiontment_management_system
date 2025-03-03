@@ -436,7 +436,7 @@ app.get('/patient-dashboard', isAuthenticated, async (req, res) => {
             ...apt,
             appointment_date: new Date(apt.appointment_date).toLocaleDateString(),
             status_class: apt.status.toLowerCase(),
-            can_cancel: apt.status === 'pending'
+            can_cancel: ['pending', 'confirmed'].includes(apt.status)
         }));
 
         // Get recent appointments (last 5)
@@ -1722,12 +1722,14 @@ app.get("/api/patient/appointments", isAuthenticated, async (req, res) => {
             SELECT 
                 a.*,
                 CONCAT(du.first_name, ' ', du.last_name) as doctor_name,
-                d.specialization
+                d.specialization,
+                CONCAT(pu.first_name, ' ', pu.last_name) as patient_name
             FROM appointments a
             JOIN doctors d ON a.doctor_id = d.id
             JOIN users du ON d.user_id = du.id
-            JOIN users pu ON a.patient_id = pu.id
-            WHERE pu.id = ?
+            JOIN patients p ON a.patient_id = p.id
+            JOIN users pu ON p.user_id = pu.id
+            WHERE p.user_id = ?
         `;
 
         if (filter === 'upcoming') {
@@ -2457,17 +2459,34 @@ app.put('/api/appointments/:id/cancel', isAuthenticated, async (req, res) => {
             ['cancelled', id]
         );
 
-        // Optionally, send cancellation notification to doctor
-        const [doctorDetails] = await pool.query(`
-            SELECT u.email 
-            FROM doctors d
-            JOIN users u ON d.user_id = u.id
-            WHERE d.id = ?
-        `, [appointment.doctor_id]);
+        // Get doctor and patient details for notification
+        const [[doctorDetails], [patientDetails]] = await Promise.all([
+            pool.query(`
+                SELECT u.email, CONCAT(d.first_name, ' ', d.last_name) as name
+                FROM doctors d
+                JOIN users u ON d.user_id = u.id
+                WHERE d.id = ?
+            `, [appointment.doctor_id]),
+            pool.query(`
+                SELECT u.email, CONCAT(p.first_name, ' ', p.last_name) as name
+                FROM patients p
+                JOIN users u ON p.user_id = u.id
+                WHERE p.id = ?
+            `, [appointment.patient_id])
+        ]);
 
-        if (doctorDetails.length > 0) {
-            // Send email notification to doctor about cancellation
-            // await sendAppointmentCancellationEmail(doctorDetails[0].email, appointment);
+        // Send cancellation notifications
+        if (doctorDetails && patientDetails) {
+            try {
+                await sendAppointmentStatusUpdate(
+                    appointment,
+                    patientDetails.email,
+                    'cancelled'
+                );
+            } catch (error) {
+                console.error('Error sending cancellation notification:', error);
+                // Don't fail the request if notification fails
+            }
         }
 
         res.json({ success: true });
