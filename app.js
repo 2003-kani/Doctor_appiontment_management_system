@@ -20,7 +20,9 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    debug: true // Enable debug logging
+    tls: {
+        rejectUnauthorized: false
+    }
 });
 
 // Test email connection immediately
@@ -522,25 +524,19 @@ app.post('/login', async (req, res) => {
 });
 
 // Update database connection
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "root",
-    database: process.env.DB_NAME || "doctor_appointment",
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-}).promise();
 
-// Add this to test the connection
-pool.getConnection()
-    .then(connection => {
+const pool = require('./config/database');
+
+// Test the connection
+(async () => {
+    try {
+        const connection = await pool.getConnection();
         console.log('Database connected successfully');
-    connection.release();
-    })
-    .catch(err => {
+        connection.release();
+    } catch (err) {
         console.error('Error connecting to the database:', err);
-    });
+    }
+})();
 
 // Remove the old test connection code and replace with this
 const testConnection = async () => {
